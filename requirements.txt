@@ -1,5 +1,5 @@
 # FastAPI and server
-fastapi==0.104.1
+fastapi==0.109.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
@@ -7,7 +7,7 @@ pydantic-settings==2.1.0
 # LangChain
 langchain==0.1.0
 langchain-openai==0.0.2
-langchain-community==0.0.10
+langchain-community==0.3.27
 
 # Vector DB
 chromadb==0.4.22

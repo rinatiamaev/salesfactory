@@ -237,6 +237,14 @@ All vector DB operations include automatic retry logic:
 4. Push to the branch
 5. Create a Pull Request
 
+## 🔐 Security
+
+All dependencies have been updated to patched versions to address known vulnerabilities:
+- ✅ FastAPI 0.109.1 (fixes ReDoS vulnerability)
+- ✅ LangChain Community 0.3.27 (fixes XXE, SSRF, pickle vulnerabilities)
+
+For detailed security information, see [docs/SECURITY.md](docs/SECURITY.md).
+
 ## 📝 License
 
 See LICENSE file for details.
