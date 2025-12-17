@@ -1,0 +1,27 @@
+# FastAPI and server
+fastapi==0.109.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# LangChain
+langchain==0.1.0
+langchain-openai==0.0.2
+langchain-community==0.3.27
+
+# Vector DB
+chromadb==0.4.22
+
+# OpenAI
+openai==1.6.1
+
+# Utilities
+python-dotenv==1.0.0
+tenacity==8.2.3
+python-json-logger==2.0.7
+httpx==0.25.2
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
