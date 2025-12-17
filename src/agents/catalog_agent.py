@@ -1,10 +1,10 @@
 """LangChain agent for catalog management."""
 from typing import List, Dict, Any, Optional
+import json
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_openai import ChatOpenAI
 from langchain.tools import Tool
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 from ..config import settings
@@ -104,7 +104,6 @@ class CatalogAgent:
     
     def _parse_tool_input(self, input_str: str) -> Dict[str, Any]:
         """Parse tool input string to dictionary."""
-        import json
         try:
             # Try to parse as JSON
             return json.loads(input_str)
