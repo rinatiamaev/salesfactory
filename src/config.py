@@ -1,5 +1,5 @@
 """Configuration management for the AI service."""
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 
@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     """Application settings."""
     
     # OpenAI Configuration
-    openai_api_key: str
+    openai_api_key: str = "test-key"  # Default for testing
     openai_model: str = "gpt-4-turbo-preview"
     
     # Server Configuration
@@ -22,9 +22,11 @@ class Settings(BaseSettings):
     wordpress_api_url: Optional[str] = None
     wordpress_api_key: Optional[str] = None
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore"
+    )
 
 
 settings = Settings()

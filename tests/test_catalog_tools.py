@@ -1,7 +1,8 @@
 """Tests for catalog tools."""
 import pytest
+from unittest.mock import MagicMock, patch
 from src.tools.catalog_tools import (
-    create_row, list_rows, get_row, update_row, delete_row, search_rows, get_catalog_stats,
+    create_row, list_rows, get_row, update_row, delete_row, get_catalog_stats,
     _catalog_storage
 )
 
@@ -14,7 +15,17 @@ def clear_catalog():
     _catalog_storage.clear()
 
 
-def test_create_row():
+@pytest.fixture(autouse=True)
+def mock_memory():
+    """Mock the vector memory to avoid ChromaDB initialization."""
+    with patch('src.tools.catalog_tools.get_memory') as mock:
+        mock_instance = MagicMock()
+        mock_instance.add_catalog_item.return_value = None
+        mock.return_value = mock_instance
+        yield mock_instance
+
+
+def test_create_row(mock_memory):
     """Test creating a catalog row."""
     result = create_row(name="Test Item", description="Test description", price=10.99)
     
@@ -23,9 +34,12 @@ def test_create_row():
     assert result["item"]["name"] == "Test Item"
     assert result["item"]["description"] == "Test description"
     assert result["item"]["price"] == 10.99
+    
+    # Verify memory was called
+    mock_memory.add_catalog_item.assert_called_once()
 
 
-def test_create_row_minimal():
+def test_create_row_minimal(mock_memory):
     """Test creating a catalog row with minimal data."""
     result = create_row(name="Minimal Item")
     
@@ -85,7 +99,7 @@ def test_get_row_not_found():
     assert "not found" in result["message"].lower()
 
 
-def test_update_row():
+def test_update_row(mock_memory):
     """Test updating a catalog row."""
     # Create an item
     create_result = create_row(name="Original Name", price=10.99)
@@ -99,7 +113,7 @@ def test_update_row():
     assert result["item"]["price"] == 15.99
 
 
-def test_update_row_partial():
+def test_update_row_partial(mock_memory):
     """Test partial update of a catalog row."""
     # Create an item
     create_result = create_row(name="Original Name", description="Original Desc", price=10.99)
