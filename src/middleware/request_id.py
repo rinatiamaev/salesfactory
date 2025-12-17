@@ -31,7 +31,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
             extra={
                 "method": request.method,
                 "path": request.url.path,
-                "client": request.client.host if request.client else None
+                "client": getattr(request.client, 'host', None) if request.client else None
             }
         )
         

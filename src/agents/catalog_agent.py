@@ -115,6 +115,12 @@ class CatalogAgent:
                 if '=' in part:
                     key, value = part.split('=', 1)
                     params[key.strip()] = value.strip()
+            
+            # If no valid parameters found, return error-indicating dict
+            if not params:
+                logger.warning(f"Could not parse tool input: {input_str}")
+                return {"error": "Invalid input format"}
+            
             return params
     
     def _create_agent(self) -> AgentExecutor:

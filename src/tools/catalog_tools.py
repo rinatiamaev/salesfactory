@@ -1,7 +1,7 @@
 """Catalog management tools for the LangChain agent."""
 from typing import Dict, Any, List, Optional
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from ..memory.vector_memory import get_memory
 from ..logger import get_logger
@@ -27,7 +27,7 @@ def create_row(name: str, description: str = "", price: Optional[float] = None, 
     """
     try:
         item_id = str(uuid.uuid4())
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
         
         item = {
             "id": item_id,
@@ -168,7 +168,7 @@ def update_row(item_id: str, name: Optional[str] = None, description: Optional[s
         if kwargs:
             item["metadata"].update(kwargs)
         
-        item["updated_at"] = datetime.utcnow().isoformat()
+        item["updated_at"] = datetime.now(timezone.utc).isoformat()
         
         # Update in vector memory
         memory = get_memory()
@@ -279,8 +279,14 @@ def get_catalog_stats() -> Dict[str, Any]:
         Dict with catalog stats
     """
     try:
-        total_items = len(_catalog_storage)
-        items_with_price = sum(1 for item in _catalog_storage.values() if item.get("price") is not None)
+        total_items = 0
+        items_with_price = 0
+        
+        # Single iteration for better performance
+        for item in _catalog_storage.values():
+            total_items += 1
+            if item.get("price") is not None:
+                items_with_price += 1
         
         return {
             "success": True,

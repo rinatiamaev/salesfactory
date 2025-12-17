@@ -1,7 +1,7 @@
 """Pydantic models for the API."""
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ChatMessage(BaseModel):
@@ -31,8 +31,8 @@ class CatalogRow(BaseModel):
     description: Optional[str] = Field(None, description="Item description")
     price: Optional[float] = Field(None, description="Item price")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class CatalogRowCreate(BaseModel):
@@ -55,4 +55,4 @@ class HealthResponse(BaseModel):
     """Health check response."""
     status: str
     version: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -2,7 +2,7 @@
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -54,11 +54,11 @@ class VectorMemory:
     def add_conversation(self, session_id: str, role: str, content: str, metadata: Optional[Dict[str, Any]] = None) -> None:
         """Add a conversation message to memory."""
         try:
-            doc_id = f"{session_id}_{datetime.utcnow().isoformat()}"
+            doc_id = f"{session_id}_{datetime.now(timezone.utc).isoformat()}"
             doc_metadata = {
                 "session_id": session_id,
                 "role": role,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 **(metadata or {})
             }
             
@@ -110,7 +110,7 @@ class VectorMemory:
             doc_metadata = {
                 "item_id": item_id,
                 "name": name,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 **(metadata or {})
             }
             
@@ -160,12 +160,12 @@ class VectorMemory:
     def add_action(self, session_id: str, action: str, parameters: Dict[str, Any], result: Any) -> None:
         """Record an agent action."""
         try:
-            doc_id = f"{session_id}_{action}_{datetime.utcnow().isoformat()}"
+            doc_id = f"{session_id}_{action}_{datetime.now(timezone.utc).isoformat()}"
             doc_content = f"Action: {action}, Parameters: {json.dumps(parameters)}"
             doc_metadata = {
                 "session_id": session_id,
                 "action": action,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "result": str(result)
             }
             
@@ -180,6 +180,7 @@ class VectorMemory:
         except Exception as e:
             logger.error(f"Failed to record action: {e}")
             # Don't raise - action recording failure shouldn't break the flow
+            # TODO: Consider adding metrics/monitoring for action recording failures
     
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
     def get_action_history(self, session_id: str, limit: int = 10) -> List[Dict[str, Any]]:
